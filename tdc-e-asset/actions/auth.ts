@@ -1,0 +1,36 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+export async function signInWithMagicLink(formData: FormData) {
+  const email = formData.get("email") as string;
+
+  if (!email || !email.includes("@")) {
+    return { error: "กรุณาระบุอีเมลที่ถูกต้อง" };
+  }
+
+  const supabase = await createClient();
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: `${origin}/auth/callback`,
+    },
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: true };
+}
+
+export async function signOut() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  revalidatePath("/", "layout");
+  redirect("/");
+}

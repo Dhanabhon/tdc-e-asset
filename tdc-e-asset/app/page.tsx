@@ -1,11 +1,41 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { Fingerprint } from "lucide-react";
+import { Fingerprint, MailCheck, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { signInWithMagicLink } from "@/actions/auth";
 
 export default function IndexLoginPage() {
+  const [email, setEmail] = useState("somchai.j@agency.go.th");
+  const [loading, setLoading] = useState(false);
+  const [sentSuccess, setSentSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMessage(null);
+    setSentSuccess(false);
+
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      const res = await signInWithMagicLink(formData);
+
+      if (res?.error) {
+        setErrorMessage(res.error);
+      } else {
+        setSentSuccess(true);
+      }
+    } catch (err: any) {
+      setErrorMessage(err.message || "เกิดข้อผิดพลาดในการส่งลิงก์");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#e9e6db] p-4 sm:p-6 md:p-10 font-sans">
       {/* 1d Split Card Container */}
@@ -47,25 +77,62 @@ export default function IndexLoginPage() {
               </p>
             </div>
 
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <div>
-                <label className="block text-[13px] font-medium text-[#4a453d] mb-1.5">
-                  อีเมลหน่วยงาน
-                </label>
-                <Input
-                  type="email"
-                  defaultValue="somchai.j@agency.go.th"
-                  className="bg-white border-[#d8d2c2] text-sm h-11 rounded-lg focus-visible:ring-[#c2593c]"
-                  required
-                />
-              </div>
-
-              <Link href="/dashboard" className="block">
-                <Button className="w-full h-11 bg-[#c2593c] hover:bg-[#a3462c] text-white text-[14.5px] font-semibold rounded-lg">
-                  ส่งลิงก์เข้าสู่ระบบ →
+            {sentSuccess ? (
+              <div className="bg-[#e4ead9] border border-[#a3c293] text-[#2c4c23] p-4 rounded-xl space-y-2">
+                <div className="flex items-center gap-2 font-semibold text-sm">
+                  <MailCheck className="w-5 h-5 text-[#42603b]" />
+                  <span>ส่ง Magic Link เรียบร้อยแล้ว!</span>
+                </div>
+                <p className="text-xs leading-relaxed">
+                  ระบบได้ส่งลิงก์เข้าสู่ระบบไปยัง <strong>{email}</strong> เรียบร้อยแล้ว กรุณาเปิดอีเมลและคลิกลิงก์เพื่อยืนยันเข้าสู่ระบบ
+                </p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setSentSuccess(false)} 
+                  className="mt-2 text-xs h-8 border-[#a3c293] bg-white text-[#2c4c23]"
+                >
+                  ลองส่งอีกครั้ง
                 </Button>
-              </Link>
-            </form>
+              </div>
+            ) : (
+              <form className="space-y-4" onSubmit={handleSubmit}>
+                {errorMessage && (
+                  <div className="bg-[#f7e5df] border border-[#e5b8a8] text-[#b3401f] p-3 rounded-lg flex items-center gap-2 text-xs">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-[13px] font-medium text-[#4a453d] mb-1.5">
+                    อีเมลหน่วยงาน
+                  </label>
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="somchai.j@agency.go.th"
+                    className="bg-white border-[#d8d2c2] text-sm h-11 rounded-lg focus-visible:ring-[#c2593c]"
+                    required
+                  />
+                </div>
+
+                <Button 
+                  type="submit" 
+                  disabled={loading}
+                  className="w-full h-11 bg-[#c2593c] hover:bg-[#a3462c] text-white text-[14.5px] font-semibold rounded-lg flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      กำลังส่งลิงก์...
+                    </>
+                  ) : (
+                    "ส่งลิงก์เข้าสู่ระบบ →"
+                  )}
+                </Button>
+              </form>
+            )}
 
             {/* Divider */}
             <div className="flex items-center gap-3 my-4">
@@ -82,14 +149,14 @@ export default function IndexLoginPage() {
                   className="w-full h-11 border-[#d8d2c2] bg-white hover:bg-[#f5f2ea] text-[13.5px] font-medium text-[#211f1c] rounded-lg gap-2.5"
                 >
                   <span className="w-[17px] h-[17px] rounded-full bg-conic-[from_0deg,#4285F4_0_25%,#34A853_0_50%,#FBBC05_0_75%,#EA4335_0] inline-block shrink-0" />
-                  ดำเนินการต่อด้วย Google
+                  ดำเนินการต่อด้วย Google (Demo)
                 </Button>
               </Link>
 
               <Link href="/dashboard" className="block">
                 <Button className="w-full h-11 bg-[#211f1c] hover:bg-[#3a362f] text-[#f0eee6] text-[13.5px] font-medium rounded-lg gap-2">
                   <Fingerprint className="w-4 h-4 text-[#c2593c]" />
-                  เข้าด้วย Passkey (ลายนิ้วมือ / Face ID)
+                  เข้าด้วย Passkey (Demo)
                 </Button>
               </Link>
             </div>
