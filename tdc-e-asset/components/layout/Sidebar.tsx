@@ -12,6 +12,7 @@ import {
   LogOut 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { signOut } from "@/actions/auth";
 
 const navigation = [
   { name: "แดชบอร์ด", href: "/dashboard", icon: LayoutDashboard },
@@ -86,13 +87,15 @@ export function Sidebar() {
             <p className="text-[11px] text-[#8b8271] truncate">ผู้ดูแลระบบ</p>
           </div>
         </div>
-        <Link
-          href="/"
+        <button
+          onClick={async () => {
+            await signOut();
+          }}
           title="ออกจากระบบ"
-          className="p-1.5 rounded-md text-[#71695e] hover:text-[#b3401f] hover:bg-[#dfdad0] transition-colors"
+          className="p-1.5 rounded-md text-[#71695e] hover:text-[#b3401f] hover:bg-[#dfdad0] transition-colors cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
-        </Link>
+        </button>
       </div>
     </aside>
   );

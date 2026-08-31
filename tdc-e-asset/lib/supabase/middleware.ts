@@ -49,17 +49,21 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/reports") ||
     path.startsWith("/admin");
 
+  // Redirect unauthenticated users attempting to access protected routes to /login
   if (!user && isProtectedPath) {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  if (user && path === "/") {
+  // Redirect authenticated users attempting to visit /login to /dashboard
+  if (user && path.startsWith("/login")) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
+
+  // Keep `/` (public landing) accessible to everyone
 
   return supabaseResponse;
 }
