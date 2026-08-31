@@ -88,13 +88,13 @@ export async function verifyEmailOtp(email: string, token: string): Promise<{ su
 }
 
 /**
- * Signs out current user, invalidates layout cache, and redirects to /login.
+ * Signs out current user, invalidates layout cache, and redirects to /.
  */
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
-  redirect("/login");
+  redirect("/");
 }
 
 /**

@@ -26,6 +26,6 @@ export async function GET(request: Request) {
     }
   }
 
-  // Error fallback redirect to /login?error=auth-failed
-  return NextResponse.redirect(`${baseOrigin}/login?error=auth-failed`);
+  // Error fallback redirect to /?error=auth-failed
+  return NextResponse.redirect(`${baseOrigin}/?error=auth-failed`);
 }
