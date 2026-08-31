@@ -1,7 +1,6 @@
-import { Plus, FolderTree, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 const categories = [
   { id: "1", name: "ครุภัณฑ์คอมพิวเตอร์", code: "7440", count: 542, description: "เครื่องคอมพิวเตอร์, โน้ตบุ๊ก, จอมอนิเตอร์, เซิร์ฟเวอร์, อุปกรณ์ต่อพ่วง" },

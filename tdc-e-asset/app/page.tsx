@@ -7,12 +7,9 @@ import {
   CheckCircle2, 
   ArrowRight, 
   Layers, 
-  Sparkles,
-  Lock,
-  Boxes,
-  Clock,
-  FileSpreadsheet,
-  UserCheck
+  Sparkles, 
+  Lock, 
+  UserCheck 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";

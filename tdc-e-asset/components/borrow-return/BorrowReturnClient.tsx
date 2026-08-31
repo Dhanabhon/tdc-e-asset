@@ -9,14 +9,9 @@ import {
   AlertCircle,
   QrCode,
   Loader2,
-  Calendar,
-  User,
   Clock,
-  Building,
   CheckCircle2,
-  Package,
   ArrowUpRight,
-  Filter,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,9 +47,6 @@ export function BorrowReturnClient({
     if (fromParam) return fromParam;
     return availableAssets.length > 0 ? availableAssets[0].id : "";
   });
-
-  // Asset search filter within the selector
-  const [assetSearchQuery, setAssetSearchQuery] = useState("");
 
   // Borrower details state
   const [borrowerName, setBorrowerName] = useState("");
@@ -100,18 +92,6 @@ export function BorrowReturnClient({
   const selectedAsset = useMemo(() => {
     return availableAssets.find((a) => a.id === selectedAssetId) || null;
   }, [availableAssets, selectedAssetId]);
-
-  // Filtered available assets list for dropdown
-  const filteredAvailableAssets = useMemo(() => {
-    if (!assetSearchQuery.trim()) return availableAssets;
-    const q = assetSearchQuery.trim().toLowerCase();
-    return availableAssets.filter(
-      (a) =>
-        a.name.toLowerCase().includes(q) ||
-        a.asset_code.toLowerCase().includes(q) ||
-        (a.brand_model && a.brand_model.toLowerCase().includes(q))
-    );
-  }, [availableAssets, assetSearchQuery]);
 
   // Tab counts
   const tabCounts = useMemo(() => {

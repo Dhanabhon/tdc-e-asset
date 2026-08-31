@@ -41,6 +41,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       categories: {
         Row: {
@@ -61,6 +62,7 @@ export interface Database {
           prefix_code?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       assets: {
         Row: {
@@ -114,6 +116,22 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "assets_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "assets_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       transactions: {
         Row: {
@@ -161,7 +179,26 @@ export interface Database {
           created_by?: string | null;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "transactions_asset_id_fkey";
+            columns: ["asset_id"];
+            isOneToOne: false;
+            referencedRelation: "assets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "transactions_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
+    };
+    Views: {
+      [_ in never]: never;
     };
     Functions: {
       borrow_asset_rpc: {
@@ -188,6 +225,9 @@ export interface Database {
       asset_status: AssetStatus;
       transaction_type: TransactionType;
       return_condition: ReturnCondition;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
     };
   };
 }

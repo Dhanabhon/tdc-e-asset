@@ -10,7 +10,6 @@ import {
   Database,
   AssetStatus,
   ReturnCondition,
-  TransactionType,
 } from "@/lib/types/database.types";
 
 export type TransactionRow = Database["public"]["Tables"]["transactions"]["Row"];
@@ -143,7 +142,7 @@ export async function returnAssetAction(
     const supabase = await createClient();
 
     // Call Postgres RPC function `return_asset_rpc`
-    const { data, error } = await supabase.rpc("return_asset_rpc", {
+    const { error } = await supabase.rpc("return_asset_rpc", {
       p_transaction_id: validated.data.transaction_id,
       p_condition: validated.data.condition as ReturnCondition,
       p_notes: validated.data.notes || null,

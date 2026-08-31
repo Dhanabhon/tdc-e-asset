@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, AlertTriangle } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 interface OverdueBannerProps {
   count: number;
