@@ -216,3 +216,79 @@ export async function deleteCategory(
     return { error: message };
   }
 }
+
+/**
+ * Deletes a category and either reassigns linked assets to another category
+ * or marks them as uncategorized (category_id = null).
+ */
+export async function deleteCategoryWithReassign(
+  categoryId: string,
+  strategy: "reassign" | "uncategorized",
+  targetCategoryId?: string
+): Promise<{ success?: boolean; error?: string }> {
+  try {
+    const supabase = await createClient();
+
+    // 1. Check if category exists
+    const { data: category, error: catError } = await supabase
+      .from("categories")
+      .select("id, name")
+      .eq("id", categoryId)
+      .single();
+
+    if (catError || !category) {
+      return { error: "ไม่พบข้อมูลหมวดหมู่ที่ต้องการลบ" };
+    }
+
+    // 2. Handle linked assets
+    if (strategy === "reassign") {
+      if (!targetCategoryId || targetCategoryId === categoryId) {
+        return { error: "กรุณาเลือกหมวดหมู่ปลายทางที่ถูกต้อง" };
+      }
+
+      // Reassign linked assets to the target category
+      const { error: updateError } = await supabase
+        .from("assets")
+        .update({ category_id: targetCategoryId })
+        .eq("category_id", categoryId);
+
+      if (updateError) {
+        console.error("Error reassigning assets:", updateError);
+        return { error: "เกิดข้อผิดพลาดในการย้ายหมวดหมู่ของครุภัณฑ์" };
+      }
+    } else if (strategy === "uncategorized") {
+      // Set category_id to NULL
+      const { error: updateError } = await supabase
+        .from("assets")
+        .update({ category_id: null })
+        .eq("category_id", categoryId);
+
+      if (updateError) {
+        console.error("Error uncategorizing assets:", updateError);
+        return { error: "เกิดข้อผิดพลาดในการปลดหมวดหมู่ของครุภัณฑ์" };
+      }
+    }
+
+    // 3. Delete the category
+    const { error: deleteError } = await supabase
+      .from("categories")
+      .delete()
+      .eq("id", categoryId);
+
+    if (deleteError) {
+      console.error("Error deleting category:", deleteError);
+      return { error: deleteError.message || "เกิดข้อผิดพลาดในการลบหมวดหมู่" };
+    }
+
+    revalidatePath("/categories");
+    revalidatePath("/assets");
+    revalidatePath("/dashboard");
+
+    return { success: true };
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "เกิดข้อผิดพลาดที่ไม่คาดคิด";
+    console.error("deleteCategoryWithReassign error:", err);
+    return { error: message };
+  }
+}
+

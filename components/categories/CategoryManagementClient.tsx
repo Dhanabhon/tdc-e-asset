@@ -291,6 +291,7 @@ export function CategoryManagementClient({ initialData }: CategoryManagementClie
         isOpen={Boolean(deletingCategory)}
         onClose={() => setDeletingCategory(null)}
         category={deletingCategory}
+        allCategories={categories}
         onSuccess={handleRefresh}
       />
     </div>
