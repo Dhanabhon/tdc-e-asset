@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const returnConditionEnum = z.enum(["good", "damaged_minor", "damaged_repair"], {
+export const returnConditionEnum = z.enum(["good", "damaged_minor", "damaged_repair", "lost"], {
   message: "กรุณาระบุสภาพครุภัณฑ์เมื่อรับคืน",
 });
 

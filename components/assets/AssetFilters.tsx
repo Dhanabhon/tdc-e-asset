@@ -83,6 +83,8 @@ export function AssetFilters({ categories, totalCount }: AssetFiltersProps) {
         return "กำลังถูกยืม";
       case "maintenance":
         return "ส่งซ่อม";
+      case "lost":
+        return "สูญหาย";
       default:
         return status;
     }
@@ -148,6 +150,7 @@ export function AssetFilters({ categories, totalCount }: AssetFiltersProps) {
             <option value="available">พร้อมใช้งาน</option>
             <option value="borrowed">กำลังถูกยืม</option>
             <option value="maintenance">ส่งซ่อม</option>
+            <option value="lost">สูญหาย</option>
           </select>
         </div>
       </div>

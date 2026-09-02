@@ -74,6 +74,12 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
             ส่งซ่อม
           </span>
         );
+      case "lost":
+        return (
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#2c2826] text-[#faf9f5]">
+            สูญหาย (แจ้งหาย)
+          </span>
+        );
       default:
         return <span className="text-[#71695e]">{condition}</span>;
     }

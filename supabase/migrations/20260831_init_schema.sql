@@ -6,7 +6,7 @@
 -- ============================================================================
 
 DO $$ BEGIN
-    CREATE TYPE public.asset_status AS ENUM ('available', 'borrowed', 'maintenance');
+    CREATE TYPE public.asset_status AS ENUM ('available', 'borrowed', 'maintenance', 'lost');
 EXCEPTION
     WHEN duplicate_object THEN NULL;
 END $$;
@@ -18,7 +18,7 @@ EXCEPTION
 END $$;
 
 DO $$ BEGIN
-    CREATE TYPE public.return_condition AS ENUM ('good', 'damaged_minor', 'damaged_repair');
+    CREATE TYPE public.return_condition AS ENUM ('good', 'damaged_minor', 'damaged_repair', 'lost');
 EXCEPTION
     WHEN duplicate_object THEN NULL;
 END $$;
@@ -358,12 +358,16 @@ BEGIN
         RAISE EXCEPTION 'Associated asset not found for transaction %', p_transaction_id;
     END IF;
 
-    v_new_available := LEAST(v_available + 1, v_total);
-
-    IF p_condition = 'damaged_repair' THEN
+    IF p_condition = 'lost' THEN
+        v_new_status := 'lost'::public.asset_status;
+        -- When lost, available quantity is NOT incremented
+        v_new_available := v_available;
+    ELSIF p_condition = 'damaged_repair' THEN
         v_new_status := 'maintenance'::public.asset_status;
+        v_new_available := LEAST(v_available + 1, v_total);
     ELSE
         v_new_status := 'available'::public.asset_status;
+        v_new_available := LEAST(v_available + 1, v_total);
     END IF;
 
     -- Update asset quantity and status

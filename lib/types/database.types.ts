@@ -6,9 +6,9 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
-export type AssetStatus = "available" | "borrowed" | "maintenance";
+export type AssetStatus = "available" | "borrowed" | "maintenance" | "lost";
 export type TransactionType = "borrow" | "return";
-export type ReturnCondition = "good" | "damaged_minor" | "damaged_repair";
+export type ReturnCondition = "good" | "damaged_minor" | "damaged_repair" | "lost";
 
 export interface Database {
   public: {

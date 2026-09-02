@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const assetStatusEnum = z.enum(["available", "borrowed", "maintenance"]);
+export const assetStatusEnum = z.enum(["available", "borrowed", "maintenance", "lost"]);
 
 export const assetSchema = z.object({
   asset_code: z.string().min(1, "กรุณาระบุรหัสครุภัณฑ์").trim(),

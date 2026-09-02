@@ -55,6 +55,17 @@ export function AssetStatusBadge({ status, className, isOverdue }: AssetStatusBa
           ส่งซ่อม
         </span>
       );
+    case "lost":
+      return (
+        <span
+          className={cn(
+            "inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#2c2826] text-[#faf9f5] border border-[#1e1b19] whitespace-nowrap shadow-2xs",
+            className
+          )}
+        >
+          สูญหาย
+        </span>
+      );
     default:
       return (
         <span

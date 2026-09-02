@@ -473,6 +473,24 @@ export function AssetForm({ categories, initialData, mode }: AssetFormProps) {
                     />
                     ส่งซ่อม
                   </label>
+
+                  <label
+                    className={`px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${
+                      status === "lost"
+                        ? "bg-[#211f1c] text-[#f0eee6] border-[#211f1c]"
+                        : "bg-white border-[#d8d2c2] text-[#4a453d] hover:bg-[#f5f2ea]"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="status"
+                      value="lost"
+                      checked={status === "lost"}
+                      onChange={() => setStatus("lost")}
+                      className="sr-only"
+                    />
+                    สูญหาย
+                  </label>
                 </div>
               </div>
             </CardContent>

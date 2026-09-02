@@ -23,6 +23,7 @@ import {
   AlertTriangle,
   Wrench,
   CheckCircle2,
+  AlertOctagon,
 } from "lucide-react";
 
 interface ReturnDialogProps {
@@ -233,6 +234,34 @@ export function ReturnDialog({
                   </div>
                   <p className="text-[11px] text-[#71695e] mt-0.5">
                     ชำรุด ใช้งานไม่ได้ ต้องส่งซ่อม (เปลี่ยนสถานะเป็น &apos;ส่งซ่อม&apos;)
+                  </p>
+                </div>
+              </label>
+
+              {/* Option 4: Lost */}
+              <label
+                onClick={() => setCondition("lost")}
+                className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                  condition === "lost"
+                    ? "bg-[#f5f3ef] border-[#2c2826] shadow-xs"
+                    : "bg-white border-[#d8d2c2] hover:bg-[#fbfaf7]"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="condition"
+                  value="lost"
+                  checked={condition === "lost"}
+                  onChange={() => setCondition("lost")}
+                  className="mt-0.5 text-[#2c2826] focus:ring-[#2c2826]"
+                />
+                <div className="text-xs">
+                  <div className="font-semibold text-[#211f1c] flex items-center gap-1.5">
+                    <AlertOctagon className="w-3.5 h-3.5 text-[#2c2826]" />
+                    <span className="text-[#2c2826]">สูญหาย / แจ้งหาย</span>
+                  </div>
+                  <p className="text-[11px] text-[#71695e] mt-0.5">
+                    ผู้ยืมทำหาย ไม่สามารถนำส่งคืนได้ (เปลี่ยนสถานะเป็น &apos;สูญหาย&apos; และไม่คืนสต็อก)
                   </p>
                 </div>
               </label>

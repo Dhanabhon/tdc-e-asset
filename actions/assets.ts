@@ -76,6 +76,7 @@ export interface AssetStatusCounts {
   available: number;
   borrowed: number;
   maintenance: number;
+  lost: number;
 }
 
 /**
@@ -89,7 +90,7 @@ export async function getAssetStatusCounts(): Promise<AssetStatusCounts> {
       .select("status");
 
     if (error || !data) {
-      return { total: 0, available: 0, borrowed: 0, maintenance: 0 };
+      return { total: 0, available: 0, borrowed: 0, maintenance: 0, lost: 0 };
     }
 
     const counts: AssetStatusCounts = {
@@ -97,18 +98,20 @@ export async function getAssetStatusCounts(): Promise<AssetStatusCounts> {
       available: 0,
       borrowed: 0,
       maintenance: 0,
+      lost: 0,
     };
 
     for (const item of data) {
       if (item.status === "available") counts.available++;
       else if (item.status === "borrowed") counts.borrowed++;
       else if (item.status === "maintenance") counts.maintenance++;
+      else if (item.status === "lost") counts.lost++;
     }
 
     return counts;
   } catch (err) {
     console.error("Error in getAssetStatusCounts:", err);
-    return { total: 0, available: 0, borrowed: 0, maintenance: 0 };
+    return { total: 0, available: 0, borrowed: 0, maintenance: 0, lost: 0 };
   }
 }
 

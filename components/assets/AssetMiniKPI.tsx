@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Package, CheckCircle2, ArrowLeftRight, Wrench } from "lucide-react";
+import { Package, CheckCircle2, ArrowLeftRight, Wrench, AlertOctagon } from "lucide-react";
 import { AssetStatusCounts } from "@/actions/assets";
 
 interface AssetMiniKPIProps {
@@ -54,10 +54,20 @@ export function AssetMiniKPI({ counts }: AssetMiniKPIProps) {
       badgeColor: "bg-[#f7e5df] text-[#b3401f]",
       activeClass: "border-[#c2593c] bg-[#fdf2ee] ring-1 ring-[#c2593c]/20",
     },
+    {
+      label: "สูญหาย",
+      count: counts.lost,
+      icon: AlertOctagon,
+      href: "/assets?status=lost",
+      active: currentStatus === "lost",
+      textColor: "text-[#2c2826]",
+      badgeColor: "bg-[#eceae5] text-[#2c2826]",
+      activeClass: "border-[#2c2826] bg-[#f5f3ef] ring-1 ring-[#2c2826]/20",
+    },
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
       {items.map((item) => {
         const Icon = item.icon;
         return (
