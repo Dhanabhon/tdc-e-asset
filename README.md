@@ -134,12 +134,25 @@ cd tdc-e-asset
 npm install
 ```
 
-### 2. ตั้งค่าฐานข้อมูล Supabase
+### 2. ตั้งค่าฐานข้อมูล Supabase (Database Setup & Migration)
 
-1. เข้าสู่ระบบ [Supabase Dashboard](https://supabase.com/dashboard) และสร้าง New Project
-2. ไปที่เมนู **SQL Editor** ในแดชบอร์ด Supabase
-3. เปิดไฟล์ `supabase/migrations/20260831_init_schema.sql` คัดลอกโค้ดทั้งหมด วางลงใน SQL Editor แล้วกด **Run**
-   - คำสั่งนี้จะสร้างตาราง `profiles`, `categories`, `assets`, `transactions`, ฟังก์ชัน `borrow_asset_rpc`, `return_asset_rpc`, นโยบาย RLS, และข้อมูลตัวอย่างสำหรับทดสอบ
+คุณสามารถเลือกวิธีรัน Migration ได้ 2 รูปแบบตามสะดวก:
+
+#### วิธีที่ 1: รันคำสั่งอัตโนมัติผ่าน Terminal (แนะนำและสะดวกที่สุด)
+1. นำ Connection String จาก Supabase Dashboard (**Project Settings** → **Database** → **Connection string URI**) มาใส่ใน `.env.local`:
+   ```env
+   DATABASE_URL="postgresql://postgres.[project-ref]:[YOUR-PASSWORD]@aws-0-[region].pooler.supabase.com:6543/postgres"
+   ```
+2. รันคำสั่ง Migration:
+   ```bash
+   npm run db:migrate
+   ```
+   *ระบบจะเชื่อมต่อไปยัง Supabase และรันไฟล์ SQL ใน `supabase/migrations/` ให้ครบถ้วนโดยอัตโนมัติ พร้อมบันทึกสถานะลงตาราง `_schema_migrations`*
+
+#### วิธีที่ 2: รันผ่าน Supabase SQL Editor ในเว็บเบราว์เซอร์
+1. ไปที่เมนู **SQL Editor** ในแดชบอร์ด Supabase
+2. เปิดไฟล์ `supabase/migrations/20260831_init_schema.sql` คัดลอกโค้ดทั้งหมด วางลงใน SQL Editor แล้วกด **Run**
+3. รันไฟล์ `supabase/migrations/20260902_create_storage_bucket.sql` เพื่อสร้าง Storage Bucket สำหรับเก็บรูปภาพครุภัณฑ์
 
 ### 3. ตั้งค่าระบบส่งอีเมล Resend (Custom SMTP)
 
