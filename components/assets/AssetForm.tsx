@@ -3,7 +3,20 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, ArrowLeft, Image as ImageIcon, Info, Loader2, AlertCircle } from "lucide-react";
+import { 
+  Check, 
+  ArrowLeft, 
+  Image as ImageIcon, 
+  Info, 
+  Loader2, 
+  AlertCircle, 
+  Sparkles,
+  Laptop,
+  Monitor,
+  Printer,
+  Server,
+  Network
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +41,39 @@ interface AssetFormProps {
   mode: "create" | "edit";
 }
 
+const PRESET_IMAGES = [
+  {
+    label: "โน้ตบุ๊ก",
+    icon: Laptop,
+    url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=80",
+  },
+  {
+    label: "คอมพิวเตอร์ PC",
+    icon: Laptop,
+    url: "https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=800&auto=format&fit=crop&q=80",
+  },
+  {
+    label: "จอภาพมอนิเตอร์",
+    icon: Monitor,
+    url: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&auto=format&fit=crop&q=80",
+  },
+  {
+    label: "เครื่องพิมพ์",
+    icon: Printer,
+    url: "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=800&auto=format&fit=crop&q=80",
+  },
+  {
+    label: "เซิร์ฟเวอร์",
+    icon: Server,
+    url: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80",
+  },
+  {
+    label: "เน็ตเวิร์ก/สวิตช์",
+    icon: Network,
+    url: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&auto=format&fit=crop&q=80",
+  },
+];
+
 export function AssetForm({ categories, initialData, mode }: AssetFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -49,6 +95,13 @@ export function AssetForm({ categories, initialData, mode }: AssetFormProps) {
   const [imgError, setImgError] = useState(false);
 
   const selectedCategory = categories.find((c) => c.id === categoryId);
+
+  const handleGenerateCode = () => {
+    const prefix = selectedCategory?.prefix_code || "7440";
+    const currentBuddhistYear = (new Date().getFullYear() + 543).toString().slice(-2);
+    const randomSeq = Math.floor(1000 + Math.random() * 9000);
+    setAssetCode(`${prefix}-001-${currentBuddhistYear}-${randomSeq}`);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -155,16 +208,27 @@ export function AssetForm({ categories, initialData, mode }: AssetFormProps) {
             <CardContent className="space-y-4 pt-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="asset_code" className="block text-xs font-medium text-[#4a453d] mb-1">
-                    รหัสครุภัณฑ์ <span className="text-[#b3401f]">*</span>
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label htmlFor="asset_code" className="block text-xs font-medium text-[#4a453d]">
+                      รหัสครุภัณฑ์ <span className="text-[#b3401f]">*</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleGenerateCode}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#c2593c] hover:text-[#a3462c] hover:underline cursor-pointer"
+                      title="สุ่มสร้างรหัสครุภัณฑ์อัตโนมัติตามหมวดหมู่และปี พ.ศ."
+                    >
+                      <Sparkles className="w-3 h-3" />
+                      <span>สุ่มสร้างรหัส</span>
+                    </button>
+                  </div>
                   <Input
                     id="asset_code"
                     name="asset_code"
                     required
                     value={assetCode}
                     onChange={(e) => setAssetCode(e.target.value)}
-                    placeholder="เช่น 7440-001-0001/2569"
+                    placeholder="เช่น 7440-001-69-1082"
                     className="bg-white border-[#d8d2c2] text-xs font-mono"
                   />
                 </div>
@@ -318,6 +382,37 @@ export function AssetForm({ categories, initialData, mode }: AssetFormProps) {
                 <p className="text-[11px] text-[#8b8271] mt-1">
                   ระบุ URL รูปภาพโดยตรงเพื่อแสดงตัวอย่างรูปภาพในระบบ
                 </p>
+
+                {/* Quick Preset Images */}
+                <div className="pt-2 space-y-1.5">
+                  <div className="text-[11px] font-medium text-[#71695e]">
+                    หรือเลือกรูปภาพตัวอย่างอุปกรณ์ไอทียอดนิยม:
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {PRESET_IMAGES.map((preset) => {
+                      const Icon = preset.icon;
+                      const isSelected = imageUrl === preset.url;
+                      return (
+                        <button
+                          key={preset.label}
+                          type="button"
+                          onClick={() => {
+                            setImageUrl(preset.url);
+                            setImgError(false);
+                          }}
+                          className={`flex items-center gap-2 p-2 rounded-lg border text-left text-xs transition-all cursor-pointer ${
+                            isSelected
+                              ? "border-[#c2593c] bg-[#faf3f0] text-[#a3462c] font-semibold ring-1 ring-[#c2593c]/20"
+                              : "border-[#e3ddcd] bg-white text-[#4a453d] hover:bg-[#f5f2ea]"
+                          }`}
+                        >
+                          <Icon className="w-4 h-4 shrink-0 text-[#71695e]" />
+                          <span className="truncate">{preset.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
 
               <div>

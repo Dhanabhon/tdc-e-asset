@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAssetById } from "@/actions/assets";
 import { AssetStatusBadge } from "@/components/assets/AssetStatusBadge";
 import { DeleteAssetButton } from "@/components/assets/DeleteAssetButton";
+import { AssetTagPrintModal } from "@/components/assets/AssetTagPrintModal";
 
 export const dynamic = "force-dynamic";
 
@@ -106,6 +107,8 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
               <ArrowLeft className="w-3.5 h-3.5 mr-1" /> ย้อนกลับ
             </Button>
           </Link>
+
+          <AssetTagPrintModal asset={asset} />
 
           <Link href={`/borrow-return?asset_id=${asset.id}&asset_code=${asset.asset_code}`}>
             <Button

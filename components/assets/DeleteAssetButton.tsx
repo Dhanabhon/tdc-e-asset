@@ -9,9 +9,14 @@ import { deleteAsset } from "@/actions/assets";
 interface DeleteAssetButtonProps {
   assetId: string;
   assetName: string;
+  variant?: "default" | "compact";
 }
 
-export function DeleteAssetButton({ assetId, assetName }: DeleteAssetButtonProps) {
+export function DeleteAssetButton({
+  assetId,
+  assetName,
+  variant = "default",
+}: DeleteAssetButtonProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -27,7 +32,7 @@ export function DeleteAssetButton({ assetId, assetName }: DeleteAssetButtonProps
           return;
         }
         setIsOpen(false);
-        router.push("/assets");
+        router.refresh();
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการลบครุภัณฑ์";
         setError(message);
@@ -37,14 +42,27 @@ export function DeleteAssetButton({ assetId, assetName }: DeleteAssetButtonProps
 
   return (
     <>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => setIsOpen(true)}
-        className="border-[#e3ddcd] text-[#b3401f] hover:bg-[#f7e5df] hover:text-[#a32e10] text-xs font-semibold"
-      >
-        <Trash2 className="w-3.5 h-3.5 mr-1" /> ลบครุภัณฑ์
-      </Button>
+      {variant === "compact" ? (
+        <Button
+          type="button"
+          size="xs"
+          variant="outline"
+          onClick={() => setIsOpen(true)}
+          className="border-[#d8d2c2] text-[#8b8271] hover:text-[#b3401f] hover:bg-[#f7e5df] hover:border-[#e5b8a8] cursor-pointer"
+          title="ลบครุภัณฑ์"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </Button>
+      ) : (
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setIsOpen(true)}
+          className="border-[#e3ddcd] text-[#b3401f] hover:bg-[#f7e5df] hover:text-[#a32e10] text-xs font-semibold cursor-pointer"
+        >
+          <Trash2 className="w-3.5 h-3.5 mr-1" /> ลบครุภัณฑ์
+        </Button>
+      )}
 
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">

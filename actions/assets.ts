@@ -71,6 +71,47 @@ export async function getCategories(): Promise<Category[]> {
   }
 }
 
+export interface AssetStatusCounts {
+  total: number;
+  available: number;
+  borrowed: number;
+  maintenance: number;
+}
+
+/**
+ * Fetch counts of assets by status for quick KPI pills
+ */
+export async function getAssetStatusCounts(): Promise<AssetStatusCounts> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("assets")
+      .select("status");
+
+    if (error || !data) {
+      return { total: 0, available: 0, borrowed: 0, maintenance: 0 };
+    }
+
+    const counts: AssetStatusCounts = {
+      total: data.length,
+      available: 0,
+      borrowed: 0,
+      maintenance: 0,
+    };
+
+    for (const item of data) {
+      if (item.status === "available") counts.available++;
+      else if (item.status === "borrowed") counts.borrowed++;
+      else if (item.status === "maintenance") counts.maintenance++;
+    }
+
+    return counts;
+  } catch (err) {
+    console.error("Error in getAssetStatusCounts:", err);
+    return { total: 0, available: 0, borrowed: 0, maintenance: 0 };
+  }
+}
+
 interface RawAssetQueryResult extends AssetRow {
   categories?: {
     id: string;

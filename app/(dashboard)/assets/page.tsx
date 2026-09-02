@@ -2,11 +2,14 @@ import Link from "next/link";
 import { Plus, Eye, Edit3, Package2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getAssets, getCategories } from "@/actions/assets";
+import { getAssets, getCategories, getAssetStatusCounts } from "@/actions/assets";
 import { AssetStatusBadge } from "@/components/assets/AssetStatusBadge";
 import { AssetFilters } from "@/components/assets/AssetFilters";
 import { AssetExportButton } from "@/components/assets/AssetExportButton";
 import { AssetPagination } from "@/components/assets/AssetPagination";
+import { AssetMiniKPI } from "@/components/assets/AssetMiniKPI";
+import { DeleteAssetButton } from "@/components/assets/DeleteAssetButton";
+import { ArrowLeftRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -27,8 +30,9 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
   const page = parseInt(resolvedParams.page || "1", 10) || 1;
   const limit = 10;
 
-  const [categories, { assets, totalCount, totalPages }] = await Promise.all([
+  const [categories, statusCounts, { assets, totalCount, totalPages }] = await Promise.all([
     getCategories(),
+    getAssetStatusCounts(),
     getAssets({
       search,
       category_id: category,
@@ -57,6 +61,9 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
           </Link>
         </div>
       </div>
+
+      {/* Mini KPI Summary */}
+      <AssetMiniKPI counts={statusCounts} />
 
       {/* Filter & Search Bar */}
       <AssetFilters categories={categories} totalCount={totalCount} />
@@ -161,11 +168,23 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
                       {/* Actions */}
                       <td className="px-4 py-3.5 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5">
+                          {asset.status === "available" && asset.available_quantity > 0 && (
+                            <Link href={`/borrow-return?asset_id=${asset.id}`}>
+                              <Button
+                                size="xs"
+                                variant="outline"
+                                className="border-[#5d7d54]/30 text-[#43633a] hover:bg-[#eef2e6] hover:text-[#2c4c23] hover:border-[#5d7d54] cursor-pointer"
+                                title="ยืมครุภัณฑ์รายการนี้"
+                              >
+                                <ArrowLeftRight className="w-3.5 h-3.5 mr-1" /> ยืม
+                              </Button>
+                            </Link>
+                          )}
                           <Link href={`/assets/${asset.id}`}>
                             <Button
                               size="xs"
                               variant="outline"
-                              className="border-[#d8d2c2] text-[#4a453d] hover:text-[#211f1c] hover:bg-white"
+                              className="border-[#d8d2c2] text-[#4a453d] hover:text-[#211f1c] hover:bg-white cursor-pointer"
                               title="ดูรายละเอียด"
                             >
                               <Eye className="w-3.5 h-3.5 mr-1" /> ดู
@@ -175,12 +194,17 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
                             <Button
                               size="xs"
                               variant="outline"
-                              className="border-[#d8d2c2] text-[#4a453d] hover:text-[#c2593c] hover:bg-white"
+                              className="border-[#d8d2c2] text-[#4a453d] hover:text-[#c2593c] hover:bg-white cursor-pointer"
                               title="แก้ไขข้อมูล"
                             >
                               <Edit3 className="w-3.5 h-3.5 mr-1" /> แก้ไข
                             </Button>
                           </Link>
+                          <DeleteAssetButton
+                            assetId={asset.id}
+                            assetName={asset.name}
+                            variant="compact"
+                          />
                         </div>
                       </td>
                     </tr>
