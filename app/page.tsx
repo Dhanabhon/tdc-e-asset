@@ -6,6 +6,7 @@ import {
   Mail,
   MailCheck,
   AlertCircle,
+  AlertTriangle,
   Loader2,
   ShieldCheck,
   ArrowRight,
@@ -15,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { signInWithMagicLink } from "@/actions/auth";
+import { validateEmailFormat } from "@/lib/validations/auth";
 import packageInfo from "@/package.json";
 
 function LoginFormContent() {
@@ -22,6 +24,8 @@ function LoginFormContent() {
   const authErrorParam = searchParams.get("error");
 
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [languageWarning, setLanguageWarning] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [sentSuccess, setSentSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(
@@ -33,16 +37,72 @@ function LoginFormContent() {
   const currentThaiYear = new Date().getFullYear() + 543;
   const appVersion = packageInfo.version;
 
+  // Prevent non-English characters (e.g. Thai keyboard) from being typed
+  const handleEmailKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Allow functional and control keys (Backspace, Tab, Enter, Escape, Arrow keys, Delete, Ctrl/Cmd shortcuts)
+    if (e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey) {
+      return;
+    }
+
+    // Only allow ASCII English letters, numbers, and standard email symbols: @ . _ - +
+    if (!/^[a-zA-Z0-9@._+-]$/.test(e.key)) {
+      e.preventDefault();
+      setLanguageWarning("พิมพ์ได้เฉพาะตัวอักษรภาษาอังกฤษ (A-Z, a-z), ตัวเลข และสัญลักษณ์อีเมลเท่านั้น (กรุณาสลับภาษาแป้นพิมพ์)");
+    } else {
+      if (languageWarning) {
+        setLanguageWarning(null);
+      }
+    }
+  };
+
+  // Filter input and sanitize in case of IME or paste
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    const cleaned = raw.replace(/[^a-zA-Z0-9@._+-]/g, "");
+
+    if (raw !== cleaned) {
+      setLanguageWarning("พิมพ์ได้เฉพาะตัวอักษรภาษาอังกฤษ (A-Z, a-z), ตัวเลข และสัญลักษณ์อีเมลเท่านั้น (กรุณาสลับภาษาแป้นพิมพ์)");
+    } else if (languageWarning) {
+      setLanguageWarning(null);
+    }
+
+    setEmail(cleaned);
+
+    // If error was active, revalidate dynamically
+    if (emailError) {
+      const check = validateEmailFormat(cleaned);
+      if (check.isValid) {
+        setEmailError(null);
+      }
+    }
+  };
+
+  // Validate on blur
+  const handleEmailBlur = () => {
+    if (email.trim().length > 0) {
+      const check = validateEmailFormat(email);
+      if (!check.isValid) {
+        setEmailError(check.error || "รูปแบบอีเมลไม่ถูกต้อง");
+      } else {
+        setEmailError(null);
+      }
+    }
+  };
+
   // Handle Magic Link Submission
   const handleMagicLinkSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
     setSentSuccess(false);
+    setLanguageWarning(null);
 
-    if (!email || !email.includes("@")) {
-      setErrorMessage("กรุณาระบุอีเมลที่ถูกต้อง");
+    const validation = validateEmailFormat(email);
+    if (!validation.isValid) {
+      setEmailError(validation.error || "รูปแบบอีเมลไม่ถูกต้อง");
       return;
     }
+
+    setEmailError(null);
 
     startTransition(async () => {
       try {
@@ -156,7 +216,7 @@ function LoginFormContent() {
                 </div>
               </div>
             ) : (
-              <form className="space-y-4" onSubmit={handleMagicLinkSubmit}>
+              <form className="space-y-4" onSubmit={handleMagicLinkSubmit} noValidate>
                 <div>
                   <label className="block text-xs font-medium text-[#4a453d] mb-1.5">
                     อีเมลผู้ดูแลระบบ / เจ้าหน้าที่
@@ -166,13 +226,41 @@ function LoginFormContent() {
                     <Input
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={handleEmailChange}
+                      onKeyDown={handleEmailKeyDown}
+                      onBlur={handleEmailBlur}
                       placeholder="john.doe@your-company.com"
-                      className="pl-9 bg-white border-[#d8d2c2] text-xs h-11 rounded-lg focus-visible:ring-[#c2593c]"
+                      className={`pl-9 bg-white text-xs h-11 rounded-lg transition-colors ${
+                        emailError
+                          ? "border-[#b3401f] focus-visible:ring-[#b3401f]"
+                          : languageWarning
+                          ? "border-[#b08d3e] focus-visible:ring-[#b08d3e]"
+                          : "border-[#d8d2c2] focus-visible:ring-[#c2593c]"
+                      }`}
                       required
                       disabled={isPending}
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      inputMode="email"
                     />
                   </div>
+
+                  {/* Language / Non-English warning */}
+                  {languageWarning && (
+                    <div className="mt-1.5 text-[11px] text-[#b08d3e] flex items-start gap-1.5 animate-in fade-in duration-150">
+                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      <span>{languageWarning}</span>
+                    </div>
+                  )}
+
+                  {/* Email format error */}
+                  {emailError && (
+                    <div className="mt-1.5 text-[11px] text-[#b3401f] flex items-start gap-1.5 animate-in fade-in duration-150">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      <span>{emailError}</span>
+                    </div>
+                  )}
                 </div>
 
                 <Button

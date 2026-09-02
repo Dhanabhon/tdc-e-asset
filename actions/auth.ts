@@ -8,6 +8,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sendMagicLinkViaResend } from "@/lib/resend/client";
 import { Database } from "@/lib/types/database.types";
 
+import { validateEmailFormat } from "@/lib/validations/auth";
+
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 /**
@@ -16,9 +18,10 @@ export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export async function signInWithMagicLink(formData: FormData): Promise<{ success?: boolean; error?: string }> {
   try {
     const email = formData.get("email") as string;
+    const validation = validateEmailFormat(email);
 
-    if (!email || typeof email !== "string" || !email.includes("@")) {
-      return { error: "กรุณาระบุอีเมลที่ถูกต้อง" };
+    if (!validation.isValid) {
+      return { error: validation.error || "รูปแบบอีเมลไม่ถูกต้อง" };
     }
 
     const cleanEmail = email.trim().toLowerCase();
