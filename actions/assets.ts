@@ -529,3 +529,70 @@ export async function deleteAsset(id: string): Promise<{ success?: boolean; erro
     return { error: message };
   }
 }
+
+/**
+ * Uploads an asset image to Supabase Storage bucket 'asset-images'
+ * and returns the public URL.
+ */
+export async function uploadAssetImageAction(
+  formData: FormData
+): Promise<{ success?: boolean; url?: string; error?: string }> {
+  try {
+    const supabase = await createClient();
+
+    const file = formData.get("file") as File | null;
+    if (!file || !(file instanceof File) || file.size === 0) {
+      return { error: "กรุณาเลือกไฟล์รูปภาพที่ต้องการอัปโหลด" };
+    }
+
+    // Validate size (max 5MB)
+    const MAX_SIZE = 5 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      return { error: "ขนาดไฟล์ต้องไม่เกิน 5 MB" };
+    }
+
+    // Validate mime type
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      return { error: "รองรับเฉพาะไฟล์รูปภาพ (JPG, PNG, WebP, GIF)" };
+    }
+
+    // Sanitize filename
+    const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const cleanFileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+    const filePath = `assets/${cleanFileName}`;
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = new Uint8Array(arrayBuffer);
+
+    // Upload to Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from("asset-images")
+      .upload(filePath, buffer, {
+        contentType: file.type,
+        upsert: true,
+      });
+
+    if (uploadError) {
+      console.error("Storage upload error:", uploadError);
+      return {
+        error: `อัปโหลดไปยัง Supabase Storage ไม่สำเร็จ: ${uploadError.message}. ตรวจสอบว่าได้สร้าง Bucket 'asset-images' แล้วหรือยัง`,
+      };
+    }
+
+    // Get public URL
+    const { data: publicUrlData } = supabase.storage
+      .from("asset-images")
+      .getPublicUrl(uploadData.path);
+
+    return {
+      success: true,
+      url: publicUrlData.publicUrl,
+    };
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการอัปโหลดไฟล์";
+    console.error("uploadAssetImageAction error:", err);
+    return { error: message };
+  }
+}
+

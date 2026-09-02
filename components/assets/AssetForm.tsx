@@ -11,17 +11,13 @@ import {
   Loader2, 
   AlertCircle, 
   Sparkles,
-  Laptop,
-  Monitor,
-  Printer,
-  Server,
-  Network
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Category, createAsset, updateAsset } from "@/actions/assets";
 import { AssetStatus } from "@/lib/types/database.types";
+import { AssetImageUpload } from "@/components/assets/AssetImageUpload";
 
 interface AssetFormProps {
   categories: Category[];
@@ -40,39 +36,6 @@ interface AssetFormProps {
   };
   mode: "create" | "edit";
 }
-
-const PRESET_IMAGES = [
-  {
-    label: "โน้ตบุ๊ก",
-    icon: Laptop,
-    url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=80",
-  },
-  {
-    label: "คอมพิวเตอร์ PC",
-    icon: Laptop,
-    url: "https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=800&auto=format&fit=crop&q=80",
-  },
-  {
-    label: "จอภาพมอนิเตอร์",
-    icon: Monitor,
-    url: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&auto=format&fit=crop&q=80",
-  },
-  {
-    label: "เครื่องพิมพ์",
-    icon: Printer,
-    url: "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=800&auto=format&fit=crop&q=80",
-  },
-  {
-    label: "เซิร์ฟเวอร์",
-    icon: Server,
-    url: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80",
-  },
-  {
-    label: "เน็ตเวิร์ก/สวิตช์",
-    icon: Network,
-    url: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&auto=format&fit=crop&q=80",
-  },
-];
 
 export function AssetForm({ categories, initialData, mode }: AssetFormProps) {
   const router = useRouter();
@@ -365,54 +328,17 @@ export function AssetForm({ categories, initialData, mode }: AssetFormProps) {
             </CardHeader>
             <CardContent className="space-y-4 pt-4">
               <div>
-                <label htmlFor="image_url" className="block text-xs font-medium text-[#4a453d] mb-1">
-                  URL รูปภาพครุภัณฑ์
+                <label className="block text-xs font-semibold text-[#4a453d] mb-1.5">
+                  รูปภาพครุภัณฑ์ (อัปโหลดเข้า Supabase Storage)
                 </label>
-                <Input
-                  id="image_url"
-                  name="image_url"
+                <AssetImageUpload
                   value={imageUrl}
-                  onChange={(e) => {
-                    setImageUrl(e.target.value);
+                  onChange={(url) => {
+                    setImageUrl(url);
                     setImgError(false);
                   }}
-                  placeholder="https://example.com/asset-photo.jpg"
-                  className="bg-white border-[#d8d2c2] text-xs"
                 />
-                <p className="text-[11px] text-[#8b8271] mt-1">
-                  ระบุ URL รูปภาพโดยตรงเพื่อแสดงตัวอย่างรูปภาพในระบบ
-                </p>
-
-                {/* Quick Preset Images */}
-                <div className="pt-2 space-y-1.5">
-                  <div className="text-[11px] font-medium text-[#71695e]">
-                    หรือเลือกรูปภาพตัวอย่างอุปกรณ์ไอทียอดนิยม:
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {PRESET_IMAGES.map((preset) => {
-                      const Icon = preset.icon;
-                      const isSelected = imageUrl === preset.url;
-                      return (
-                        <button
-                          key={preset.label}
-                          type="button"
-                          onClick={() => {
-                            setImageUrl(preset.url);
-                            setImgError(false);
-                          }}
-                          className={`flex items-center gap-2 p-2 rounded-lg border text-left text-xs transition-all cursor-pointer ${
-                            isSelected
-                              ? "border-[#c2593c] bg-[#faf3f0] text-[#a3462c] font-semibold ring-1 ring-[#c2593c]/20"
-                              : "border-[#e3ddcd] bg-white text-[#4a453d] hover:bg-[#f5f2ea]"
-                          }`}
-                        >
-                          <Icon className="w-4 h-4 shrink-0 text-[#71695e]" />
-                          <span className="truncate">{preset.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                <input type="hidden" name="image_url" value={imageUrl} />
               </div>
 
               <div>
