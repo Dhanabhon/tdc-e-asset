@@ -222,26 +222,42 @@ export async function updateCurrentUserProfile(
       return { error: "ชื่อ-นามสกุลต้องมีความยาวอย่างน้อย 2 ตัวอักษร" };
     }
 
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .update({
-        full_name: fullName,
-        department,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", user.id);
-
-    if (profileError) {
-      return { error: profileError.message || "ไม่สามารถอัปเดตข้อมูลส่วนตัวได้" };
-    }
-
-    // Sync auth user_metadata as well
-    await supabase.auth.updateUser({
+    // 1. Sync auth user_metadata first (always works even if profiles table is pending)
+    const { error: authUpdateError } = await supabase.auth.updateUser({
       data: {
         full_name: fullName,
         department,
       },
     });
+
+    if (authUpdateError) {
+      console.warn("Auth updateUser warning:", authUpdateError.message);
+    }
+
+    // 2. Upsert into public.profiles
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .upsert({
+        id: user.id,
+        email: user.email ?? "",
+        full_name: fullName,
+        department,
+        updated_at: new Date().toISOString(),
+      });
+
+    if (profileError) {
+      console.error("Profile upsert error:", profileError);
+      if (
+        profileError.message?.includes("schema cache") ||
+        profileError.message?.includes("profiles")
+      ) {
+        return {
+          error:
+            "ยังไม่ได้รัน Migration สร้างตาราง profiles ในฐานข้อมูล Supabase กรุณานำสคริปต์ใน supabase/migrations/20260831_init_schema.sql ไป Run ใน Supabase Dashboard > SQL Editor เพื่อสร้างตารางทั้งหมด",
+        };
+      }
+      return { error: profileError.message || "ไม่สามารถอัปเดตข้อมูลส่วนตัวได้" };
+    }
 
     revalidatePath("/", "layout");
     revalidatePath("/profile");
