@@ -4,12 +4,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { sendMagicLinkViaResend } from "@/lib/resend/client";
 import { Database } from "@/lib/types/database.types";
 
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 /**
- * Sends a passwordless Magic Link to the user's email.
+ * Sends a passwordless Magic Link to the user's email using Resend and Supabase.
  */
 export async function signInWithMagicLink(formData: FormData): Promise<{ success?: boolean; error?: string }> {
   try {
@@ -29,8 +31,6 @@ export async function signInWithMagicLink(formData: FormData): Promise<{ success
         error: "ยังไม่ได้ตั้งค่า NEXT_PUBLIC_SUPABASE_URL และ NEXT_PUBLIC_SUPABASE_ANON_KEY ใน Vercel Environment Variables กรุณาตั้งค่าใน Vercel Dashboard > Settings > Environment Variables ก่อนเข้าสู่ระบบ",
       };
     }
-
-    const supabase = await createClient();
 
     // Dynamic origin detection for Vercel production, preview & local dev
     let origin = process.env.NEXT_PUBLIC_SITE_URL;
@@ -56,6 +56,36 @@ export async function signInWithMagicLink(formData: FormData): Promise<{ success
     const cleanOrigin = origin ? origin.trim().replace(/\/+$/, "") : "http://localhost:3000";
     const emailRedirectTo = `${cleanOrigin}/auth/callback`;
 
+    // Priority 1: Direct Resend delivery via Supabase Admin generateLink
+    const adminClient = createAdminClient();
+    const hasResendApiKey = !!process.env.RESEND_API_KEY;
+
+    if (adminClient && hasResendApiKey) {
+      const { data: linkData, error: linkError } = await adminClient.auth.admin.generateLink({
+        type: "magiclink",
+        email: cleanEmail,
+        options: {
+          redirectTo: emailRedirectTo,
+        },
+      });
+
+      if (linkError || !linkData?.properties?.action_link) {
+        console.warn("Could not generate link via admin API, falling back to signInWithOtp:", linkError?.message);
+      } else {
+        const resendResult = await sendMagicLinkViaResend({
+          to: cleanEmail,
+          magicLink: linkData.properties.action_link,
+        });
+
+        if (resendResult.success) {
+          return { success: true };
+        }
+        console.warn("Direct Resend email delivery failed, falling back to signInWithOtp:", resendResult.error);
+      }
+    }
+
+    // Priority 2: Standard Supabase signInWithOtp (which uses Resend SMTP configured in Supabase settings)
+    const supabase = await createClient();
     const { error } = await supabase.auth.signInWithOtp({
       email: cleanEmail,
       options: {
