@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Bell, Search, Calendar, LogOut } from "lucide-react";
+import { Search, Calendar, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { getThaiHeaderDate } from "@/lib/utils";
 import { getUserProfile, Profile } from "@/actions/auth";
@@ -53,14 +53,6 @@ export function Header() {
             <Calendar className="w-3.5 h-3.5 text-[#71695e]" />
             <span>{currentDateThai}</span>
           </div>
-
-          <button
-            className="relative p-2 rounded-lg text-[#71695e] hover:bg-[#eae7dc] transition-colors cursor-pointer"
-            title="การแจ้งเตือน"
-          >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#c2593c]" />
-          </button>
 
           {/* User Profile Link */}
           <Link
