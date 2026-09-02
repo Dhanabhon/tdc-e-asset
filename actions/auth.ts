@@ -197,3 +197,58 @@ export async function getUserProfile(): Promise<Profile | null> {
     return null;
   }
 }
+
+/**
+ * Updates the currently logged-in user's own profile (full_name, department).
+ */
+export async function updateCurrentUserProfile(
+  formData: FormData
+): Promise<{ success?: boolean; error?: string }> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { error: "กรุณาเข้าสู่ระบบก่อนดำเนินการ" };
+    }
+
+    const fullName = (formData.get("full_name") as string)?.trim();
+    const department = (formData.get("department") as string)?.trim() || null;
+
+    if (!fullName || fullName.length < 2) {
+      return { error: "ชื่อ-นามสกุลต้องมีความยาวอย่างน้อย 2 ตัวอักษร" };
+    }
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({
+        full_name: fullName,
+        department,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", user.id);
+
+    if (profileError) {
+      return { error: profileError.message || "ไม่สามารถอัปเดตข้อมูลส่วนตัวได้" };
+    }
+
+    // Sync auth user_metadata as well
+    await supabase.auth.updateUser({
+      data: {
+        full_name: fullName,
+        department,
+      },
+    });
+
+    revalidatePath("/", "layout");
+    revalidatePath("/profile");
+    return { success: true };
+  } catch (err) {
+    console.error("updateCurrentUserProfile error:", err);
+    return { error: "เกิดข้อผิดพลาดในการอัปเดตข้อมูลส่วนตัว" };
+  }
+}
+

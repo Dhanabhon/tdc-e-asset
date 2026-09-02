@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Bell, Search, Calendar, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -60,6 +61,20 @@ export function Header() {
             <Bell className="w-4 h-4" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#c2593c]" />
           </button>
+
+          {/* User Profile Link */}
+          <Link
+            href="/profile"
+            className="flex items-center gap-2 p-1.5 rounded-lg text-[#71695e] hover:text-[#211f1c] hover:bg-[#eae7dc] transition-colors cursor-pointer"
+            title="ดูโปรไฟล์ของคุณ"
+          >
+            <div className="w-7 h-7 rounded-full bg-[#5d7d54] text-white flex items-center justify-center text-[10px] font-bold shrink-0 shadow-2xs">
+              {profile?.full_name ? profile.full_name.trim().slice(0, 2) : profile?.email ? profile.email.slice(0, 2).toUpperCase() : "ผด"}
+            </div>
+            <span className="text-xs font-semibold text-[#211f1c] hidden lg:inline max-w-[120px] truncate">
+              {profile?.full_name || profile?.email?.split("@")[0] || "โปรไฟล์"}
+            </span>
+          </Link>
 
           {/* Quick Logout Header Button */}
           <button

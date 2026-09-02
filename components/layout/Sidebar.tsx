@@ -96,17 +96,23 @@ export function Sidebar() {
           </nav>
         </div>
 
-        {/* User Profile Footer with Logout Trigger */}
+        {/* User Profile Footer with Profile Link & Logout Trigger */}
         <div className="pt-4 border-t border-[#ddd6c6] flex items-center justify-between">
-          <div className="flex items-center gap-3 min-w-0 pr-2">
-            <div className="w-8 h-8 rounded-full bg-[#5d7d54] text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs">
+          <Link
+            href="/profile"
+            className="flex items-center gap-3 min-w-0 pr-2 p-1.5 -ml-1.5 rounded-lg hover:bg-[#dfdad0] transition-colors cursor-pointer group flex-1"
+            title="ดูโปรไฟล์ของคุณ"
+          >
+            <div className="w-8 h-8 rounded-full bg-[#5d7d54] text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
               {initials}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-[#211f1c] truncate">{displayName}</p>
+              <p className="text-xs font-semibold text-[#211f1c] truncate group-hover:text-[#c2593c] transition-colors">
+                {displayName}
+              </p>
               <p className="text-[11px] text-[#8b8271] truncate">{displayRole}</p>
             </div>
-          </div>
+          </Link>
           <button
             type="button"
             onClick={() => setIsLogoutOpen(true)}

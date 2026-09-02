@@ -47,7 +47,8 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/borrow-return") ||
     path.startsWith("/categories") ||
     path.startsWith("/reports") ||
-    path.startsWith("/admin");
+    path.startsWith("/admin") ||
+    path.startsWith("/profile");
 
   // If request has a Supabase auth code (?code=...) on any route other than /auth/callback,
   // forward to /auth/callback to exchange the code for a session cookie and redirect to /dashboard
