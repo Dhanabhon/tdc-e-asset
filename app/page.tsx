@@ -56,7 +56,16 @@ function LoginFormContent() {
           setSentSuccess(true);
         }
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการส่งลิงก์เข้าสู่ระบบ";
+        console.error("Client login submission error:", err);
+        let msg = "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ กรุณาตรวจสอบ Environment Variables บน Vercel หรือลองใหม่อีกครั้ง";
+        if (
+          err instanceof Error &&
+          err.message &&
+          !err.message.includes("Minified React error") &&
+          !err.message.includes("react.dev/errors")
+        ) {
+          msg = err.message;
+        }
         setErrorMessage(msg);
       }
     });
