@@ -1,0 +1,66 @@
+import { Skeleton } from "@/components/ui/skeleton";
+
+export default function AdminPageLoading() {
+  return (
+    <div className="space-y-6 animate-in fade-in duration-200">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-96" />
+        </div>
+        <Skeleton className="h-10 w-44 rounded-lg" />
+      </div>
+
+      {/* KPI Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="bg-[#faf9f5] border border-[#e3ddcd] rounded-xl p-4 flex items-center gap-3.5 shadow-2xs">
+            <Skeleton className="w-10 h-10 rounded-xl" />
+            <div className="space-y-1.5 flex-1">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-6 w-20" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Info Banner */}
+      <Skeleton className="h-12 w-full rounded-xl" />
+
+      {/* Search & Filter */}
+      <div className="bg-[#faf9f5] border border-[#e3ddcd] p-3 rounded-xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-2xs">
+        <Skeleton className="h-9 max-w-md flex-1 rounded-lg" />
+        <Skeleton className="h-9 w-60 rounded-lg" />
+      </div>
+
+      {/* Table */}
+      <div className="bg-[#faf9f5] border border-[#e3ddcd] rounded-xl overflow-hidden shadow-2xs">
+        <div className="bg-[#f5f2ea] px-5 py-3 border-b border-[#e7e2d4]">
+          <Skeleton className="h-4 w-48" />
+        </div>
+
+        <div className="divide-y divide-[#efeadd]">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="px-5 py-3.5 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+                <div className="space-y-1.5 min-w-0 flex-1">
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-3 w-52" />
+                </div>
+              </div>
+              <Skeleton className="h-4 w-32 hidden sm:block" />
+              <Skeleton className="h-6 w-24 rounded-full" />
+              <Skeleton className="h-4 w-24 hidden md:block" />
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-8 w-14 rounded-lg" />
+                <Skeleton className="h-8 w-14 rounded-lg" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
