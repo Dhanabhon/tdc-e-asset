@@ -1,12 +1,7 @@
 # TDC e-Asset - ระบบบริหารจัดการครุภัณฑ์หน่วยงานราชการ (MVP)
 
-[![Deploy to Vercel](https://github.com/Dhanabhon/tdc-e-asset/actions/workflows/deploy.yml/badge.svg)](https://github.com/Dhanabhon/tdc-e-asset/actions/workflows/deploy.yml)
-[![Next.js](https://img.shields.io/badge/Next.js-16.3-black?style=flat&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=flat&logo=supabase&logoColor=white)](https://supabase.com/)
-[![Resend](https://img.shields.io/badge/Resend-Custom_SMTP-000000?style=flat&logo=resend&logoColor=white)](https://resend.com/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=flat&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/License-Government_Standard-4A5568?style=flat)](LICENSE)
+[![Build Status](https://github.com/Dhanabhon/tdc-e-asset/actions/workflows/deploy.yml/badge.svg)](https://github.com/Dhanabhon/tdc-e-asset/actions/workflows/deploy.yml)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Production-black?style=flat&logo=vercel&logoColor=white)](https://vercel.com)
 
 > **TDC e-Asset** แพลตฟอร์มบริหารจัดการครุภัณฑ์และสินทรัพย์ไอทีสำหรับหน่วยงานราชการ บันทึกทะเบียนพัสดุ ติดตามการยืม–คืนออนไลน์ ป้องกันสต็อกติดลบด้วย Concurrency Row-Level Lock และรายงานสรุปข้อมูลแบบเรียลไทม์
 
