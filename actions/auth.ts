@@ -34,12 +34,12 @@ export async function signInWithMagicLink(formData: FormData): Promise<{ success
 
     // Dynamic origin detection for Vercel production, preview & local dev
     let origin = process.env.NEXT_PUBLIC_SITE_URL;
-    if (!origin) {
+    if (!origin || (process.env.NODE_ENV === "production" && origin.includes("localhost"))) {
       try {
         const headerList = await headers();
         const host = headerList.get("x-forwarded-host") || headerList.get("host");
         const proto = headerList.get("x-forwarded-proto") || (process.env.NODE_ENV === "production" ? "https" : "http");
-        if (host) {
+        if (host && !host.includes("localhost")) {
           origin = `${proto}://${host}`;
         } else if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
           origin = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
@@ -53,10 +53,13 @@ export async function signInWithMagicLink(formData: FormData): Promise<{ success
       }
     }
 
+    const cleanOrigin = origin ? origin.trim().replace(/\/+$/, "") : "http://localhost:3000";
+    const emailRedirectTo = `${cleanOrigin}/auth/callback`;
+
     const { error } = await supabase.auth.signInWithOtp({
       email: cleanEmail,
       options: {
-        emailRedirectTo: `${origin}/auth/callback`,
+        emailRedirectTo,
       },
     });
 

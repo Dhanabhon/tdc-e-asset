@@ -49,6 +49,15 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/reports") ||
     path.startsWith("/admin");
 
+  // If request has a Supabase auth code (?code=...) on any route other than /auth/callback,
+  // forward to /auth/callback to exchange the code for a session cookie and redirect to /dashboard
+  const code = request.nextUrl.searchParams.get("code");
+  if (code && !path.startsWith("/auth/callback")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/callback";
+    return NextResponse.redirect(url);
+  }
+
   // Redirect unauthenticated users attempting to access protected routes to /
   if (!user && isProtectedPath) {
     const url = request.nextUrl.clone();
