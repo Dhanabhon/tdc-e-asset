@@ -2,6 +2,9 @@
 
 > **TDC e-Asset** แพลตฟอร์มบริหารจัดการครุภัณฑ์และสินทรัพย์ไอทีสำหรับหน่วยงานราชการ บันทึกทะเบียนพัสดุ ติดตามการยืม–คืนออนไลน์ ป้องกันสต็อกติดลบด้วย Concurrency Row-Level Lock และรายงานสรุปข้อมูลแบบเรียลไทม์
 
+> [!NOTE]
+> 🎓 **Demo Project:** โครงการนี้เป็นโปรเจกต์สาธิต (Demo Project) สำหรับหลักสูตรและเวิร์กช็อป **[AI-Ready Developers Workshop](https://github.com/Dhanabhon/ai-ready-developers-workshop)** เพื่อสาธิตการออกแบบ พัฒนา และส่งมอบระบบจริงร่วมกับ AI โดยใช้สถาปัตยกรรมระดับองค์กร (Next.js 16 App Router + Supabase PostgreSQL + Resend + Vercel)
+
 ---
 
 ## 🚀 จุดเด่นและคุณสมบัติหลัก (Key Features)
@@ -208,6 +211,15 @@ npm run build
    - `NEXT_PUBLIC_SITE_URL` (URL โดเมนของ Vercel)
 4. อัปเดต **Site URL** และ **Redirect URLs** ใน Supabase ให้ตรงกับโดเมนบน Vercel
 5. กด **Deploy**
+
+---
+
+## 🎓 โครงการสาธิต (Demo Project Context)
+
+โปรเจกต์นี้ถูกพัฒนาขึ้นเพื่อเป็นตัวอย่างเชิงปฏิบัติ (Case Study & Demo Project) ของหลักสูตร:
+👉 **[AI-Ready Developers Workshop](https://github.com/Dhanabhon/ai-ready-developers-workshop)**
+
+มุ่งเน้นการถ่ายทอดเทคนิคการทำงานร่วมกับ AI Coding Assistant (เช่น Spec-Driven Development, Concurrency Row-Level Locking, Enterprise Auth & Middleware, Automated Quality Gates และ Production Deployment)
 
 ---
 
