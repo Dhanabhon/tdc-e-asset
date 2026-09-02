@@ -230,6 +230,75 @@ npm run build
 
 ---
 
+## 📊 สถิติการพัฒนาด้วย AI และการบริหารโควตา (AI Metrics & Quota Analysis)
+
+โครงการนี้ถูกพัฒนาขึ้นด้วยกระบวนการ **Autonomous Agentic Coding** ร่วมกับระบบ **Google Antigravity (AGY)** โดยมีสถิติการใช้งานจริงและข้อพิจารณาเรื่องโควตาการใช้งานดังนี้:
+
+### 1. สถิติการใช้ Tokens ในโครงการนี้ (Actual Project Metrics)
+
+* **โมเดล AI หลักและ Subagents**: **Google Gemini 2.5 Pro** (พร้อมเปิดระบบ Thinking / Chain-of-Thought เพื่อวางแผนและตรวจสอบโค้ดเชิงลึก)
+* **สถาปัตยกรรม Agentic**: **1 Main Orchestrator** ร่วมกับ **12 Specialized Subagents** (วิศวกรเฉพาะทางและผู้ตรวจสอบ Spec Compliance)
+* **จำนวนรอบการคิดและการทำงาน (Total Steps / API Turns)**: **1,997 Steps**
+* **Output Tokens ที่ AI สร้างขึ้นจริง**: **~1,228,765 Tokens** (ประมาณ 1.23 ล้าน Tokens / ~4.42 ล้านตัวอักษร)
+* **Cumulative Context Tokens**: **~280M – 330M Tokens** (คำนวณจากประวัติการสนทนา, โค้ดที่อ่านวิเคราะห์, และผลการรันคำสั่ง Terminal สะสมตลอด ~2,000 รอบ)
+
+#### การแบ่งสัดส่วนการทำงานระหว่าง Main Agent และ Subagents
+
+| บทบาท (Agent Role) | จำนวน Steps ที่ทำงาน | Output Tokens ที่สร้าง |
+| :--- | :---: | :---: |
+| 👑 **Main Agent (Orchestrator & Coordinator)** | 1,038 | ~579,035 |
+| 🛠️ Subagent 1: **Database & Infrastructure Engineer** | 106 | ~51,129 |
+| 🛡️ Subagent 2: **Spec Compliance Reviewer (DB)** | 28 | ~13,942 |
+| 🛠️ Subagent 3: **Auth & Middleware Engineer** | 119 | ~68,216 |
+| 🛡️ Subagent 4: **Spec Compliance Reviewer (Auth)** | 33 | ~21,622 |
+| 🛠️ Subagent 5: **Asset Feature Engineer** | 140 | ~94,866 |
+| 🛡️ Subagent 6: **Spec Compliance Reviewer (Asset)** | 33 | ~31,666 |
+| 🛠️ Subagent 7: **Borrow-Return Feature Engineer** | 106 | ~61,678 |
+| 🛡️ Subagent 8: **Spec Compliance Reviewer (Borrow-Return)** | 37 | ~27,649 |
+| 🛠️ Subagent 9: **Dashboard Feature Engineer** | 90 | ~65,185 |
+| 🛡️ Subagent 10: **Spec Compliance Reviewer (Dashboard)** | 37 | ~25,331 |
+| 🛠️ Subagent 11: **Documentation & Verification Engineer** | 107 | ~78,122 |
+| 🛡️ Subagent 12: **Final Code Reviewer** | 123 | ~110,317 |
+| **รวมทั้งสิ้น (Total)** | **1,997 Steps** | **~1,228,765 Tokens** |
+
+---
+
+### 2. การประเมินการใช้งานบน Google Antigravity: Pro vs. Free Tier
+
+ระบบ Antigravity คำนวณโควตาจาก **"Compute Effort"** (ภาระงานที่ Agent กระทำ เช่น การค้นหาไฟล์ทั้งระบบ, การสร้างไฟล์ใหม่, การคอมไพล์โค้ด, และการ Spawn Subagents) ซึ่งกินทรัพยากรมากกว่าการถาม-ตอบทั่วไปหลายเท่าตัว
+
+| มิติการเปรียบเทียบ | Google AI Pro / Ultra Tier | Antigravity Free Tier (Individual) |
+| :--- | :--- | :--- |
+| **กลไกการรีเฟรชโควตา (Refresh Cycle)** | **ทุกๆ 5 ชั่วโมง** (Rolling 5-Hour Window) | **รายสัปดาห์ (Weekly Rate Limit Bucket)** |
+| **ขีดความสามารถต่อรอบ** | สูงมาก รองรับการทำงานต่อเนื่องได้ทั้งวัน | ~50 – 100 Steps / สัปดาห์ (~50k–80k tokens) |
+| **จำนวนรอบ Reset เพื่อจบโปรเจกต์นี้** | **2 – 3 รอบ** | **ประมาณ 15 – 20 รอบสัปดาห์** |
+| **ระยะเวลาจริงที่ต้องใช้** | **1 – 2 วัน** | **ประมาณ 3 – 5 เดือน** (หากรอ Weekly Reset) |
+| **การรองรับ Multi-Subagent** | รองรับการรัน Subagent ขนานกันได้เต็มรูปแบบ | เสี่ยงติดโควตาหมดทันทีภายในไม่กี่นาที |
+
+---
+
+### 3. คำแนะนำสำหรับผู้ใช้งาน Free Tier (Best Practices & Tips)
+
+หากต้องการนำ Antigravity Free Tier มาพัฒนาโปรเจกต์ให้มีประสิทธิภาพสูงสุด:
+
+1. **ระวัง "Subagent Cascade"**:
+   - หลีกเลี่ยงคำสั่งที่ทำให้ Agent แตกตัวเรียก Subagents ซ้อนกันหลายตัว เพราะแต่ละตัวมีลูป Thinking และ Tool Calls ของตนเอง ซึ่งจะผลาญโควตารายสัปดาห์จนหมดอย่างรวดเร็ว
+   - สำหรับงานขนาดเล็ก ให้ระบุสั่งงานโดยตรง เช่น `แก้ไขฟังก์ชัน X ในไฟล์ Y` หรือใช้โหมด `/fast`
+2. **ขยันเปิด New Session เพื่อล้าง Context (Clear Context Window Bloat)**:
+   - ยิ่งคุยในแชทเดิมนาน Context ย้อนหลังจะยิ่งใหญ่ขึ้นเรื่อยๆ (ทำให้ทุกครั้งที่พิมพ์คำสั่งใหม่ ต้องเสียโควตาซ้ำซ้อน)
+   - แนะนำให้เปิด Session แชทใหม่ทุกครั้งเมื่อเริ่ม Milestone ใหม่ เช่น จบงาน Database แล้วเปิดแชทใหม่เริ่มงาน UI
+3. **สลับไปใช้ Model ประหยัด (`flash` / `flash_lite`)**:
+   - โมเดลเริ่มต้นของระบบคือ **Gemini Pro** ซึ่งใช้พลังประมวลผลสูง
+   - สำหรับงานระดับ Presentation, CSS, หรือปรับแก้ข้อความเล็กน้อย สามารถระบุให้ใช้โมเดล **Gemini Flash** ได้ ซึ่งประหยัดโควตากว่า **3 – 5 เท่า**
+4. **วางแผนงานแบบแบ่งสัปดาห์ (Weekly Milestone Strategy)**:
+   - จัดสรรงานให้สอดคล้องกับรอบ Weekly Reset เช่น:
+     - สัปดาห์ที่ 1: ติดตั้งโครงสร้างและฐานข้อมูล (Schema & Migrations)
+     - สัปดาห์ที่ 2: สร้างหน้ารายการและระบบเพิ่มครุภัณฑ์ (Assets CRUD)
+     - สัปดาห์ที่ 3: พัฒนาระบบยืม-คืนพร้อม Concurrency Safety (Borrow-Return)
+     - สัปดาห์ที่ 4: พัฒนา Dashboard สถิติและระบบรายงาน (Dashboard & Reports)
+
+---
+
 ## 🎓 โครงการสาธิต (Demo Project Context)
 
 โปรเจกต์นี้ถูกพัฒนาขึ้นเพื่อเป็นตัวอย่างเชิงปฏิบัติ (Case Study & Demo Project) ของหลักสูตร:
