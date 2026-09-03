@@ -11,7 +11,8 @@ import {
   Pencil, 
   Trash2, 
   Info,
-  Calendar
+  Calendar,
+  X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -143,8 +144,18 @@ export function UserManagementClient({ initialData }: UserManagementClientProps)
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="ค้นหาชื่อ, อีเมล หรือหน่วยงาน..."
-            className="pl-9 bg-white border-[#d8d2c2] text-xs h-9 focus-visible:ring-[#c2593c]"
+            className="pl-9 pr-8 bg-white border-[#d8d2c2] text-xs h-9 focus-visible:ring-1 focus-visible:ring-[#c2593c]"
           />
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={() => setSearchTerm("")}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8b8271] hover:text-[#211f1c] cursor-pointer"
+              title="ล้างข้อความค้นหา"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
 
         {/* Role Tabs */}

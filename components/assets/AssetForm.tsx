@@ -205,7 +205,7 @@ export function AssetForm({ categories, initialData, mode }: AssetFormProps) {
                     required
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full h-9 px-3 py-1 bg-white border border-[#d8d2c2] rounded-md text-xs font-medium text-[#211f1c] focus:outline-none focus:border-[#c2593c]"
+                    className="w-full h-9 px-3 py-1 bg-white border border-[#d8d2c2] rounded-md text-xs font-medium text-[#211f1c] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#c2593c] focus-visible:border-[#c2593c] transition-colors cursor-pointer"
                   >
                     <option value="" disabled>
                       -- เลือกหมวดหมู่ --

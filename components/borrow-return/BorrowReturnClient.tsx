@@ -12,6 +12,7 @@ import {
   Clock,
   CheckCircle2,
   ArrowUpRight,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -261,7 +262,7 @@ export function BorrowReturnClient({
                         setSelectedAssetId(e.target.value);
                         setBorrowError(null);
                       }}
-                      className="w-full h-10 px-3 bg-white border border-[#d8d2c2] rounded-lg text-xs font-medium text-[#211f1c] focus:outline-none focus:ring-1 focus:ring-[#c2593c]"
+                      className="w-full h-10 px-3 bg-white border border-[#d8d2c2] rounded-lg text-xs font-medium text-[#211f1c] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#c2593c] focus-visible:border-[#c2593c] transition-colors cursor-pointer"
                     >
                       {availableAssets.map((asset) => (
                         <option key={asset.id} value={asset.id}>
@@ -489,8 +490,18 @@ export function BorrowReturnClient({
                 placeholder="ค้นหาชื่อผู้ยืม, รหัส หรือชื่อ..."
                 value={loansSearchTerm}
                 onChange={(e) => setLoansSearchTerm(e.target.value)}
-                className="pl-8 bg-white border-[#d8d2c2] text-xs h-9 rounded-lg"
+                className="pl-8 pr-8 bg-white border-[#d8d2c2] text-xs h-9 rounded-lg focus-visible:ring-1 focus-visible:ring-[#c2593c]"
               />
+              {loansSearchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setLoansSearchTerm("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8b8271] hover:text-[#211f1c] cursor-pointer"
+                  title="ล้างข้อความค้นหา"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           </div>
 

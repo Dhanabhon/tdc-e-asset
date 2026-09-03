@@ -100,28 +100,37 @@ export function AssetFilters({ categories, totalCount }: AssetFiltersProps) {
     <div className="space-y-3">
       <div className="flex flex-col md:flex-row gap-3">
         {/* Search Input */}
-        <form onSubmit={handleSearchSubmit} className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8b8271]" />
-          <Input
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="ค้นหาด้วยรหัสครุภัณฑ์, ชื่อรายการ, S/N, สถานที่, หรือหน่วยงาน..."
-            className="pl-9 pr-9 bg-white border-[#d8d2c2] text-xs h-10 rounded-lg focus-visible:ring-1 focus-visible:ring-[#c2593c]"
-          />
-          {isPending ? (
-            <Loader2 className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-[#8b8271] animate-spin" />
-          ) : searchInput ? (
-            <button
-              type="button"
-              onClick={() => {
-                setSearchInput("");
-                updateFilters({ search: "" });
-              }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b8271] hover:text-[#211f1c] cursor-pointer"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          ) : null}
+        <form onSubmit={handleSearchSubmit} className="flex gap-2 flex-1">
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8b8271]" />
+            <Input
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="ค้นหาด้วยรหัสครุภัณฑ์, ชื่อรายการ, S/N, สถานที่, หรือหน่วยงาน..."
+              className="pl-9 pr-9 bg-white border-[#d8d2c2] text-xs h-10 rounded-lg focus-visible:ring-1 focus-visible:ring-[#c2593c]"
+            />
+            {isPending ? (
+              <Loader2 className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-[#8b8271] animate-spin" />
+            ) : searchInput ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchInput("");
+                  updateFilters({ search: "" });
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b8271] hover:text-[#211f1c] cursor-pointer"
+                title="ล้างข้อความค้นหา"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            ) : null}
+          </div>
+          <button
+            type="submit"
+            className="h-10 px-3.5 bg-[#211f1c] hover:bg-[#383431] text-white text-xs font-semibold rounded-lg shrink-0 cursor-pointer transition-colors"
+          >
+            ค้นหา
+          </button>
         </form>
 
         {/* Filter Dropdowns */}
@@ -130,7 +139,7 @@ export function AssetFilters({ categories, totalCount }: AssetFiltersProps) {
           <select
             value={currentCategory}
             onChange={(e) => updateFilters({ category: e.target.value })}
-            className="h-10 px-3 py-1 bg-[#faf9f5] border border-[#d8d2c2] rounded-lg text-xs font-medium text-[#211f1c] hover:bg-white focus:outline-none focus:border-[#c2593c] transition-colors cursor-pointer"
+            className="h-10 px-3 py-1 bg-white border border-[#d8d2c2] rounded-lg text-xs font-medium text-[#211f1c] hover:border-[#c2593c] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#c2593c] transition-colors cursor-pointer"
           >
             <option value="all">หมวดหมู่: ทั้งหมด</option>
             {categories.map((cat) => (
@@ -144,7 +153,7 @@ export function AssetFilters({ categories, totalCount }: AssetFiltersProps) {
           <select
             value={currentStatus}
             onChange={(e) => updateFilters({ status: e.target.value })}
-            className="h-10 px-3 py-1 bg-[#faf9f5] border border-[#d8d2c2] rounded-lg text-xs font-medium text-[#211f1c] hover:bg-white focus:outline-none focus:border-[#c2593c] transition-colors cursor-pointer"
+            className="h-10 px-3 py-1 bg-white border border-[#d8d2c2] rounded-lg text-xs font-medium text-[#211f1c] hover:border-[#c2593c] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#c2593c] transition-colors cursor-pointer"
           >
             <option value="all">สถานะ: ทั้งหมด</option>
             <option value="available">พร้อมใช้งาน</option>
