@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, Package, Home } from "lucide-react";
+import { Package, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function RootNotFound() {
